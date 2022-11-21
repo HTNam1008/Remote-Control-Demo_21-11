@@ -22,7 +22,7 @@ public class KillAppController {
             alert1.show();
         }
         else {
-            HelloController.dout.writeUTF("AppRunningKill "+"/"+pid);
+            HelloController.dout.writeUTF("AppRunningKill"+"/"+pid);
             HelloController.dout.flush();
             String line=HelloController.din.readUTF();
             if (line.equals("NO"))

